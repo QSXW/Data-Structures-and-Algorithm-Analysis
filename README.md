@@ -4,8 +4,8 @@
 
 ## String
 * Use `object-oriented` and `pointer` to implement String, whose definition implemented in sqstring.cpp
-* The class String highly reloads the operator for fundamental function of String.
-* To use `String.cpp`, please create a new file named `String.h`. below is a sample:
+* The class String highly reloads the operator for the fundamental function of String.
+* To use `String.cpp`, please create a new file named `String.h`. Below is a sample:
 ```C++
 #ifndef _STRING_H_
 #define _STRING_H_
@@ -14,4 +14,26 @@
 
 #endif
 ```
+* Below is a String sample in your codes:
+```C++
+#include <iostream>
+#include <string>
+using namespace ::std;
+#include "String.h"
 
+int main()
+{
+	String s = "abcdefghefghijklmn";
+	String s1 = "xyz";
+
+	s = s + s1;
+	s1 = s;
+	if (s == s1)
+	{
+		cout << s << endl;
+	}
+
+	cin.get();
+	return 0;
+}
+```
