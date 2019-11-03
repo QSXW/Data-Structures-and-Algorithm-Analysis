@@ -44,7 +44,7 @@ int main()
 * Implemented by **Three Tuple**.
 * Support the Matrix basic operations using the operator reloaded.
 * Using `sparsematrix.cpp`, You're capable of doing **matrix operations** on `any M rows and N columns`.
-* TupleSparseMatrix is a `template class`. Specify a typename before using, like `TupleSparseMatrix<typename>`.
+* TupleSparseMatrix is a `template class`. Specify a typename before using, like ```C++ TupleSparseMatrix<typename>```.
 * Below is a sample.:
 ```C++
 int main()
