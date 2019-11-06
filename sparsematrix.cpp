@@ -235,13 +235,13 @@ std::ostream & operator<< (std::ostream &os, TupleSparseMatrix<T> &t)
         return os;
     }
 
-	/* Generally speaking, the vector would initialize the element to be zero.
-	   But for safer, below is intended to automatically set all elements to be zero.
-	*/
+    /* Generally speaking, the vector would initialize the element to be zero.
+    But for safer, below is intended to automatically set all elements to be zero.
+    */
     std::vector<std::vector<T>> mat;
     for (int i = 0; i < t.rows; i++)
     {
-		mat.push_back(std::vector<T>(t.columns));
+	mat.push_back(std::vector<T>(t.columns));
         for (int j = 0; j < t.columns; j++)
         {
             mat[i][j] = (T)0;
@@ -269,7 +269,7 @@ std::ostream & operator<< (std::ostream &os, TupleSparseMatrix<T> &t)
 
 int main()
 {  
-	using namespace ::std;
+    using namespace ::std;
     TupleSparseMatrix<int> a({
 		{ 0, 0, 1, 0, 0, 0, 0, 0 },
 		{ 0, 2, 0, 0, 0, 0, 0, 0 },
