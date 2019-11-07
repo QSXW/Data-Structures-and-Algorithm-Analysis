@@ -166,59 +166,63 @@ public:
 	TupleSparseMatrix<ElemType> & operator+ (TupleSparseMatrix<ElemType> &b)
 	{
 		TupleSparseMatrix<ElemType> *a = new TupleSparseMatrix();
-		a->rows = this->rows;
-		a->columns = this->columns;
 		
 		if (this->rows == b.rows && this->columns == b.columns)
 		{
 			for (int i = 0, j = 0; i < this->nonZeroCnt || j < b.nonZeroCnt; /* None */)
 			{
-				this->judgeAdd(a, b, &i, &j);
+				if (j >= b.nonZeroCnt || (i < this->nonZeroCnt && this->data[i].row < b.data[j].row))
+				{
+					a->data.push_back(TupleNode<ElemType>(this->data[i].row, this->data[i].column, this->data[i].e));
+					i++;
+					continue;
+				}
+				else if (i >= this->nonZeroCnt || (j < b.nonZeroCnt && this->data[i].row > b.data[j].row))
+				{
+					a->data.push_back(TupleNode<ElemType>(b.data[j].row, b.data[j].column, b.data[j].e));
+					j++;
+					continue;
+				}
+				else if (i < this->nonZeroCnt && j < b.nonZeroCnt && this->data[i].row == b.data[j].row)
+				{
+					if (this->data[i].column == b.data[j].column)
+					{
+						a->data.push_back(TupleNode<ElemType>(this->data[i].row, this->data[i].column, this->data[i].e + b.data[j].e));
+						i++;
+						j++;
+						continue;
+					}
+					else if (this->data[i].column < b.data[j].column)
+					{
+						a->data.push_back(TupleNode<ElemType>(this->data[i].row, this->data[i].column, this->data[i].e));
+						i++;
+						continue;
+					}
+					else if (this->data[i].column > b.data[j].column)
+					{
+						a->data.push_back(TupleNode<ElemType>(b.data[j].row, b.data[j].column, b.data[j].e));
+						j++;
+						continue;
+					}
+				}
 			}
 		}
+		a->rows = this->rows;
+		a->columns = this->columns;
 		a->nonZeroCnt = (int)a->data.size();
 		return *a;
 	}
 
-	void judgeAdd(TupleSparseMatrix<ElemType> *a, TupleSparseMatrix<ElemType> &b, int *i, int *j)
+	TupleSparseMatrix<ElemType> & operator* (int i)
 	{
-		if (*j >= b.nonZeroCnt || (*i < this->nonZeroCnt && this->data[*i].row < b.data[*j].row))
-		{
-			a->data.push_back(TupleNode<ElemType>(this->data[*i].row, this->data[*i].column, this->data[*i].e));
-			(*i)++;
-			return;
-		}
-		else if (*i >= this->nonZeroCnt || (*j < b.nonZeroCnt && this->data[*i].row > b.data[*j].row))
-		{
-			a->data.push_back(TupleNode<ElemType>(b.data[*j].row, b.data[*j].column, b.data[*j].e));
-			(*j)++;
-			return;
-		}
-		else if (*i < this->nonZeroCnt && *j < b.nonZeroCnt && this->data[*i].row == b.data[*j].row)
-		{
-			if (*i < this->nonZeroCnt && *j < b.nonZeroCnt && this->data[*i].column == b.data[*j].column)
-			{
-				a->data.push_back(TupleNode<ElemType>(this->data[*i].row, this->data[*i].column, this->data[*i].e + b.data[*j].e));
-				(*i)++;
-				(*j)++;
-				return;
-			}
-			else if (*i < this->nonZeroCnt && this->data[*i].column < b.data[*j].column)
-			{
-				a->data.push_back(TupleNode<ElemType>(this->data[*i].row, this->data[*i].column, this->data[*i].e));
-				(*i)++;
-				this->judgeAdd(a, b, i, j);
-			}
-			else if (*j < b.nonZeroCnt && this->data[*i].column > b.data[*j].column)
-			{
-				a->data.push_back(TupleNode<ElemType>(b.data[*j].row, b.data[*j].column, b.data[*j].e));
-				(*j)++;
-				this->judgeAdd(a, b, i, j);
-			}
-		}
+		TupleSparseMatrix<ElemType> *a = new TupleSparseMatrix();
 
-		return;
+		/* Pending complete. */
+
+		a->nonZeroCnt = (int)a->data.size();
+		return *a;
 	}
+
 
 private:
     size_t rows;
@@ -235,13 +239,13 @@ std::ostream & operator<< (std::ostream &os, TupleSparseMatrix<T> &t)
         return os;
     }
 
-    /* Generally speaking, the vector would initialize the element to be zero.
-    But for safer, below is intended to automatically set all elements to be zero.
-    */
+	/* Generally speaking, the vector would initialize the element to be zero.
+	   But for safer, below is intended to automatically set all elements to be zero.
+	*/
     std::vector<std::vector<T>> mat;
     for (int i = 0; i < t.rows; i++)
     {
-	mat.push_back(std::vector<T>(t.columns));
+		mat.push_back(std::vector<T>(t.columns));
         for (int j = 0; j < t.columns; j++)
         {
             mat[i][j] = (T)0;
@@ -267,16 +271,19 @@ std::ostream & operator<< (std::ostream &os, TupleSparseMatrix<T> &t)
     return os;
 }
 
+#if 0
 int main()
 {  
-    using namespace ::std;
+	using namespace ::std;
+/*
     TupleSparseMatrix<int> a({
-		{ 0, 0, 1, 0, 0, 0, 0, 0 },
-		{ 0, 2, 0, 0, 0, 0, 0, 0 },
-		{ 3, 0, 4, 0, 0, 0, 0, 3 },
-		{ 0, 0, 0, 5, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 6, 0, 0, 0 },
-		{ 0, 2, 0, 0, 0, 7, 4, 8 }
+		{ 0, 0, 1, 0, 0, 0, 0 },
+		{ 0, 2, 0, 0, 0, 0, 0 },
+		{ 3, 0, 4, 0, 0, 0, 0 },
+		{ 0, 0, 0, 5, 0, 0, 0 },
+		{ 0, 0, 0, 0, 6, 0, 0 },
+		{ 0, 2, 0, 0, 0, 7, 4 },
+		{ 3, 0, 4, 0, 0, 0, 0 }
 	});
 
 	TupleSparseMatrix<int> b({
@@ -285,17 +292,32 @@ int main()
 		{ 3, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 5, 0, 0, 0, 0 },
 		{ 0, 0, 7, 0, 6, 0, 0, 0 },
+		{ 0, 0, 4, 0, 0, 7, 4, 0 },
 		{ 0, 0, 4, 0, 0, 7, 4, 0 }
+	});
+*/
+
+	TupleSparseMatrix<int> a({
+		{ 5, 2, 4 },
+		{ 3, 8, 2 },
+		{ 6, 0, 4 },
+		{ 0, 1, 6 }
+	});
+
+	TupleSparseMatrix<int> b({
+		{ 2, 4 },
+		{ 1, 3 },
+		{ 3, 2 }
 	});
 
 	TupleSparseMatrix<int> c = a + b;
 	cout << a;
 	cout << endl;
 	cout << b;
-
 	cout << endl;
 	cout << c;
 
     std::cin.get();
     return 0;
 }
+#endif
