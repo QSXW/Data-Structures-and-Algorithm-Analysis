@@ -1,23 +1,13 @@
-# Data-Structures-and-Algorithm-Analysis (Based on C++11 standard
+# Data-Structures-and-Algorithm-Analysis (Based on C++11 standard)
 
 ## String
-* Use `object-oriented` and `pointer` to implement String, whose definition implemented in sqstring.cpp
-* The class String highly reloads the operator for the fundamental function of String.
-* To use `String.cpp`, please create a new file named `String.h`. Below is a sample:
-```C++
-/*
-* Neglect the following example if you're using Microsoft Visual Studio or acquainted with C/C++.
-*/
-#ifndef _STRING_H_
-#define _STRING_H_
-
-#endif
-```
-* Below is a String sample in your codes:
+* Using `object-oriented` and `LIST` to implement String, whose definition implemented in sequence.h.
+* The class String overloaded the operator of the fundamental function of String.
+* To use `sequnence.h`, below is a String sample in your codes:
 ```C++
 #include <iostream>
 using namespace ::std;
-#include "String.h"
+#include "squnence.h"
 
 int main()
 {
