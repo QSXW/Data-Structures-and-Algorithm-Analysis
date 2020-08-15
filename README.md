@@ -6,7 +6,7 @@
 * To use `String.cpp`, please create a new file named `String.h`. Below is a sample:
 ```C++
 /*
-* Neglect the sample if you're using Microsoft Visual Studio.
+* Neglect the following example if you're using Microsoft Visual Studio or acquainted with C/C++.
 */
 #ifndef _STRING_H_
 #define _STRING_H_
