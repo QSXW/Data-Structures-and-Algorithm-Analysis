@@ -11,8 +11,6 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
-#include "String.cpp"
-
 #endif
 ```
 * Below is a String sample in your codes:
