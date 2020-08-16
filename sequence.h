@@ -4,6 +4,8 @@
 #define __SEQUENCE_H__
 #include <iostream>
 
+constexpr unsigned int PREVIOUS_OPERATOR_ADD = 0x10U;
+
 template<class __Mystr>
 class _Charsequnce_iterator {
 public:
@@ -29,6 +31,8 @@ public:
     CharSequence<__Mystr>& operator +(const __Mystr *_s);
     bool operator ==(CharSequence<__Mystr> &_cs);
     bool operator ==(const __Mystr *_s);
+    bool operator !=(CharSequence<__Mystr> &_cs);
+    bool operator !=(const __Mystr *_s);
     bool operator >(CharSequence<__Mystr> &_cs);
     bool operator >(const __Mystr *_s);
     bool operator <(CharSequence<__Mystr> &_cs);
@@ -51,6 +55,7 @@ private:
     __Mystr        *str;
     size_t         size;
     int            threshhold;
+    int            preop;
     CharSequence   *next;
 };
 
@@ -124,7 +129,7 @@ int cscomp(const __Mystr *_s, const __Mystr *_t)
 }
 
 template <class __Mystr>
-CharSequence<__Mystr>::CharSequence() : str(NULL), next(NULL), size(0), threshhold(0) { }
+CharSequence<__Mystr>::CharSequence() : str(NULL), next(NULL), size(0), threshhold(0), preop(0) { }
 
 template <class __Mystr>
 CharSequence<__Mystr>::CharSequence(const CharSequence<__Mystr> &_cs) : CharSequence()
@@ -179,13 +184,18 @@ void CharSequence<__Mystr>::destroy()
 template <class __Mystr>
 CharSequence<__Mystr>& CharSequence<__Mystr>::operator =(CharSequence<__Mystr> &_cs)
 {
-    CharSequence *cs = new CharSequence<__Mystr>(_cs);
+    CharSequence *cs = (_cs.preop & PREVIOUS_OPERATOR_ADD) ? &_cs : new CharSequence<__Mystr>(_cs);
     if (this->next) { this->next->destroy(); }
     if (this->str) { free(this->str); }
     this->str           = cs->str;
     this->size          = cs->size;
     this->threshhold    = cs->threshhold;
     this->next          = cs->next;
+    this->preop         = 0;
+    
+    cs->str     = NULL;
+    cs->next    = NULL;
+    delete cs;
     return *this;
 }
 
@@ -325,6 +335,7 @@ CharSequence<__Mystr>& CharSequence<__Mystr>::operator +(CharSequence<__Mystr> &
     *(join) = &_csnd;
     cs = new CharSequence<__Mystr>(*_csst);
     *(join) = NULL;
+    cs->preop |= PREVIOUS_OPERATOR_ADD;
     return *cs;
 }
 
@@ -349,6 +360,26 @@ inline bool operator ==(const __Mystr *_s, CharSequence<__Mystr> &_cs)
 }
 
 template <class __Mystr>
+bool CharSequence<__Mystr>::operator !=(CharSequence<__Mystr> &_cs)
+{
+    if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
+    return cscomp(this->str, _cs.str);
+}
+
+template <class __Mystr>
+bool CharSequence<__Mystr>::operator !=(const __Mystr *_s)
+{
+    if ((this->next && this->normalize()));
+    return cscomp(this->str, _s ? _s : "");
+}
+
+template <class __Mystr>
+inline bool operator !=(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+{
+    return (_cs != _s);
+}
+
+template <class __Mystr>
 bool CharSequence<__Mystr>::operator >(CharSequence<__Mystr> &_cs)
 {
     if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
@@ -365,7 +396,7 @@ bool CharSequence<__Mystr>::operator >(const __Mystr *_s)
 template <class __Mystr>
 inline bool operator >(const __Mystr *_s, CharSequence<__Mystr> &_cs)
 {
-    return (_cs > _s);
+    return (_cs < _s);
 }
 
 template <class __Mystr>
@@ -385,7 +416,7 @@ bool CharSequence<__Mystr>::operator <(const __Mystr *_s)
 template <class __Mystr>
 inline bool operator <(const __Mystr *_s, CharSequence<__Mystr> &_cs)
 {
-    return (_cs < _s);
+    return (_cs > _s);
 }
 
 #endif
