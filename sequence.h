@@ -6,37 +6,38 @@
 
 constexpr unsigned int PREVIOUS_OPERATOR_ADD = 0x10U;
 
-template<class __Mystr>
+template<class _Mystr_>
 class _Charsequnce_iterator {
 public:
-    using value_type        = __Mystr;
+    using value_type        = _Mystr_;
     using reference         = value_type&;
 };
 
-template <class __Mystr>
+template <class _Mystr_>
 class CharSequence {
 public:
     CharSequence();
-    CharSequence(const __Mystr *_s);
-    CharSequence(const CharSequence<__Mystr> &_cs);
+    CharSequence(const _Mystr_ *_s);
+    CharSequence(const CharSequence<_Mystr_> &_cs);
+    CharSequence(int _count, const _Mystr_ _c);
     ~CharSequence();
 
     size_t length() const;
     void destroy();
 
-    CharSequence<__Mystr> &operator =(CharSequence<__Mystr> &_cs);
-    CharSequence<__Mystr> &operator +=(const __Mystr *_s);
-    __Mystr& operator[](std::size_t _index);
-    CharSequence<__Mystr>& operator +(CharSequence<__Mystr> &_csnd);
-    CharSequence<__Mystr>& operator +(const __Mystr *_s);
-    bool operator ==(CharSequence<__Mystr> &_cs);
-    bool operator ==(const __Mystr *_s);
-    bool operator !=(CharSequence<__Mystr> &_cs);
-    bool operator !=(const __Mystr *_s);
-    bool operator >(CharSequence<__Mystr> &_cs);
-    bool operator >(const __Mystr *_s);
-    bool operator <(CharSequence<__Mystr> &_cs);
-    bool operator <(const __Mystr *_s);
+    CharSequence<_Mystr_> &operator =(CharSequence<_Mystr_> &_cs);
+    CharSequence<_Mystr_> &operator +=(const _Mystr_ *_s);
+    _Mystr_& operator[](std::size_t _index);
+    CharSequence<_Mystr_>& operator +(CharSequence<_Mystr_> &_csnd);
+    CharSequence<_Mystr_>& operator +(const _Mystr_ *_s);
+    bool operator ==(CharSequence<_Mystr_> &_cs);
+    bool operator ==(const _Mystr_ *_s);
+    bool operator !=(CharSequence<_Mystr_> &_cs);
+    bool operator !=(const _Mystr_ *_s);
+    bool operator >(CharSequence<_Mystr_> &_cs);
+    bool operator >(const _Mystr_ *_s);
+    bool operator <(CharSequence<_Mystr_> &_cs);
+    bool operator <(const _Mystr_ *_s);
 
     template <class _T>
     friend std::ostream& operator <<(std::ostream &_os, CharSequence<_T> *_cs);
@@ -44,7 +45,7 @@ public:
     friend std::istream& operator >>(std::istream &_is, CharSequence<_T> &_cs);
 
 public:
-    using iterator = _Charsequnce_iterator<__Mystr &>;
+    using iterator = _Charsequnce_iterator<_Mystr_ &>;
     iterator begin() noexcept;
     iterator end() noexcept;
 
@@ -52,49 +53,43 @@ private:
     bool normalize();
 
 private:
-    __Mystr        *str;
+    _Mystr_        *str;
     size_t         size;
     int            threshhold;
     int            preop;
     CharSequence   *next;
 };
 
-template <class __Mystr>
-size_t cslen(const __Mystr *s);
+using String = CharSequence<char>;
 
-template <class __Mystr>
-int cscomp(const __Mystr *_s, const __Mystr *_t);
-
-template <class __Mystr>
-inline std::ostream& operator <<(std::ostream &_os, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline std::ostream& operator <<(std::ostream &_os, CharSequence<_Mystr_> &_cs)
 {
     return (_os << &_cs);
 }
 
-template <class __Mystr>
-inline CharSequence<__Mystr>& CharSequence<__Mystr>::operator+(const __Mystr *_s)
+template <class _Mystr_>
+inline CharSequence<_Mystr_>& CharSequence<_Mystr_>::operator+(const _Mystr_ *_s)
 {
-    return (*this + *(new CharSequence<__Mystr>(_s)));
+    return (*this + *(new CharSequence<_Mystr_>(_s)));
 }
 
-template <class __Mystr>
-inline CharSequence<__Mystr>& operator +(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline CharSequence<_Mystr_>& operator +(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
-    return (*(new CharSequence<__Mystr>(_s)) + _cs);
+    return (*(new CharSequence<_Mystr_>(_s)) + _cs);
 }
 
-using String = CharSequence<char>;
-
-template <class __Mystr>
-typename CharSequence<__Mystr>::iterator CharSequence<__Mystr>::begin() noexcept
+template <class _Mystr_>
+typename CharSequence<_Mystr_>::iterator CharSequence<_Mystr_>::begin() noexcept
 {
     // return (this->str[0]);
 }
 
-template <class __Mystr>
-typename CharSequence<__Mystr>::iterator CharSequence<__Mystr>::end() noexcept
+template <class _Mystr_>
+typename CharSequence<_Mystr_>::iterator CharSequence<_Mystr_>::end() noexcept
 {
-    CharSequence<__Mystr> *cs = this;
+    CharSequence<_Mystr_> *cs = this;
     while (cs->next != NULL)
     {
         cs = cs->next;
@@ -102,45 +97,42 @@ typename CharSequence<__Mystr>::iterator CharSequence<__Mystr>::end() noexcept
     // return *(cs->str + cs->size);
 }
 
-template <class __Mystr>
-size_t cslen(const __Mystr *s)
+template <class _Mystr_>
+size_t cslen(const _Mystr_ *s)
 {
-    const register __Mystr *p = s;
+    const register _Mystr_ *p = s;
     while (*p) { p++; }
     return (size_t)(p - s);
 }
 
-template <class __Mystr>
-int cscomp(const __Mystr *_s, const __Mystr *_t)
+template <class _Mystr_>
+int cscomp(const _Mystr_ *_s, const _Mystr_ *_t)
 {
-    register const __Mystr *p0 = _s;
-    register const __Mystr *p1 = _t;
+    register const _Mystr_ *p0 = _s;
+    register const _Mystr_ *p1 = _t;
 
     while (*p0 == *p1)
     {
-        if (*p0 == '\0')
-        {
-            return 0;
-        }
+        if (*p0 == '\0') { return 0; }
         p0++;
         p1++;
     }
-    return (size_t)(*p0 - *p1);
+    return (*p0 - *p1);
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>::CharSequence() : str(NULL), next(NULL), size(0), threshhold(0), preop(0) { }
+template <class _Mystr_>
+CharSequence<_Mystr_>::CharSequence() : str(NULL), next(NULL), size(0), threshhold(0), preop(0) { }
 
-template <class __Mystr>
-CharSequence<__Mystr>::CharSequence(const CharSequence<__Mystr> &_cs) : CharSequence()
+template <class _Mystr_>
+CharSequence<_Mystr_>::CharSequence(const CharSequence<_Mystr_> &_cs) : CharSequence()
 {
-    this->str = (__Mystr *)malloc((_cs.length() + 1) * sizeof(__Mystr));
-    const CharSequence<__Mystr> *cs = &_cs;
+    this->str = (_Mystr_ *)malloc((_cs.length() + 1) * sizeof(_Mystr_));
+    const CharSequence<_Mystr_> *cs = &_cs;
     while (cs)
     {
         if (cs->str[0] != '\0')
         {
-            memcpy(this->str + this->size, cs->str, cs->size * sizeof(__Mystr));
+            memcpy(this->str + this->size, cs->str, cs->size * sizeof(_Mystr_));
             this->size += cs->size;
         }
         cs = cs->next;
@@ -148,11 +140,11 @@ CharSequence<__Mystr>::CharSequence(const CharSequence<__Mystr> &_cs) : CharSequ
     this->str[this->size] = '\0';
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>::CharSequence(const __Mystr *_s) : CharSequence<__Mystr>()
+template <class _Mystr_>
+CharSequence<_Mystr_>::CharSequence(const _Mystr_ *_s) : CharSequence<_Mystr_>()
 {
     this->size = _s ? cslen(_s) : 0;
-    this->str = (__Mystr *)malloc((this->size + 1) * sizeof(_s));
+    this->str = (_Mystr_ *)malloc((this->size + 1) * sizeof(_s));
     if (this->size > 0)
     {
         memcpy(this->str, _s, (this->size + 1) * sizeof(_s));
@@ -160,18 +152,26 @@ CharSequence<__Mystr>::CharSequence(const __Mystr *_s) : CharSequence<__Mystr>()
     *(this->str + this->size) = '\0';
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>::~CharSequence() 
+template <class _Mystr_>
+CharSequence<_Mystr_>::CharSequence(int _count, const _Mystr_ _c) : CharSequence<_Mystr_>()
+{
+    this->str = (_Mystr_ *)malloc((_count + 1) * sizeof(_Mystr_));
+    while (_count-- > 0) { this->str[this->size++] = _c; }
+    this->str[this->size] = '\0';
+}
+
+template <class _Mystr_>
+CharSequence<_Mystr_>::~CharSequence() 
 {
     if (this->str) { free(this->str); }
     this->next->destroy();
 }
 
-template <class __Mystr>
-void CharSequence<__Mystr>::destroy()
+template <class _Mystr_>
+void CharSequence<_Mystr_>::destroy()
 {
-    CharSequence<__Mystr> *cs = this;
-    CharSequence<__Mystr> *__cs = NULL;
+    CharSequence<_Mystr_> *cs = this;
+    CharSequence<_Mystr_> *__cs = NULL;
     while (cs != NULL)
     {
         free(cs->str);
@@ -181,10 +181,10 @@ void CharSequence<__Mystr>::destroy()
     }
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>& CharSequence<__Mystr>::operator =(CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+CharSequence<_Mystr_>& CharSequence<_Mystr_>::operator =(CharSequence<_Mystr_> &_cs)
 {
-    CharSequence *cs = (_cs.preop & PREVIOUS_OPERATOR_ADD) ? &_cs : new CharSequence<__Mystr>(_cs);
+    CharSequence *cs = (_cs.preop & PREVIOUS_OPERATOR_ADD) ? &_cs : new CharSequence<_Mystr_>(_cs);
     if (this->next) { this->next->destroy(); }
     if (this->str) { free(this->str); }
     this->str           = cs->str;
@@ -199,12 +199,12 @@ CharSequence<__Mystr>& CharSequence<__Mystr>::operator =(CharSequence<__Mystr> &
     return *this;
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>& CharSequence<__Mystr>::operator +=(const __Mystr *_s)
+template <class _Mystr_>
+CharSequence<_Mystr_>& CharSequence<_Mystr_>::operator +=(const _Mystr_ *_s)
 {
     if (_s[0] == '\0') { return *this; }
-    CharSequence<__Mystr> *_next = new CharSequence<__Mystr>(_s);
-    CharSequence<__Mystr> *cs = this;
+    CharSequence<_Mystr_> *_next = new CharSequence<_Mystr_>(_s);
+    CharSequence<_Mystr_> *cs = this;
     
     while (cs->next != NULL)
     {
@@ -219,11 +219,11 @@ CharSequence<__Mystr>& CharSequence<__Mystr>::operator +=(const __Mystr *_s)
     return *this;
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::normalize()
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::normalize()
 {
-    CharSequence<__Mystr> *cs =  new CharSequence<__Mystr>(*this);
-    CharSequence<__Mystr> *__cs = new CharSequence<__Mystr>();
+    CharSequence<_Mystr_> *cs =  new CharSequence<_Mystr_>(*this);
+    CharSequence<_Mystr_> *__cs = new CharSequence<_Mystr_>();
 
     __cs->str           = cs->str;
     __cs->size          = cs->size;
@@ -247,10 +247,10 @@ bool CharSequence<__Mystr>::normalize()
     return true;
 }
 
-template <class __Mystr>
-__Mystr& CharSequence<__Mystr>::operator[](size_t _index)
+template <class _Mystr_>
+_Mystr_& CharSequence<_Mystr_>::operator[](size_t _index)
 {
-    CharSequence<__Mystr> *cs = this;
+    CharSequence<_Mystr_> *cs = this;
     while (cs && _index >= cs->size)
     {
         _index -= cs->size;
@@ -259,10 +259,10 @@ __Mystr& CharSequence<__Mystr>::operator[](size_t _index)
     return *(cs->str + _index);
 }
 
-template <class __Mystr>
-size_t CharSequence<__Mystr>::length() const
+template <class _Mystr_>
+size_t CharSequence<_Mystr_>::length() const
 {
-    const CharSequence<__Mystr> *_cs = this;
+    const CharSequence<_Mystr_> *_cs = this;
     size_t length = 0;
     while (_cs)
     {
@@ -272,8 +272,8 @@ size_t CharSequence<__Mystr>::length() const
     return length;
 }
 
-template <class __Mystr>
-std::ostream& operator <<(std::ostream &_os, CharSequence<__Mystr> *_cs)
+template <class _Mystr_>
+std::ostream& operator <<(std::ostream &_os, CharSequence<_Mystr_> *_cs)
 {
     while (_cs != NULL)
     {
@@ -283,8 +283,8 @@ std::ostream& operator <<(std::ostream &_os, CharSequence<__Mystr> *_cs)
     return _os;
 }
 
-template <class __Mystr>
-std::istream& operator >>(std::istream &_is, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+std::istream& operator >>(std::istream &_is, CharSequence<_Mystr_> &_cs)
 {
     char mbuf[1024 + 1];
     char *pos0 = mbuf;
@@ -304,14 +304,14 @@ std::istream& operator >>(std::istream &_is, CharSequence<__Mystr> &_cs)
         if (*pos0 == 32 || *pos0 == 10)
         {
             *pos0 = '\0';
-            _cs += (__Mystr *)mbuf;
+            _cs += (_Mystr_ *)mbuf;
             pos0 = mbuf;
             break;
         }
         else if((pos0 - mbuf) >= 1024)
         {
             *++pos0 = '\0';
-            _cs += (__Mystr *)mbuf;
+            _cs += (_Mystr_ *)mbuf;
             pos0 = mbuf;
             continue;
         }
@@ -321,100 +321,100 @@ std::istream& operator >>(std::istream &_is, CharSequence<__Mystr> &_cs)
     return _is;
 }
 
-template <class __Mystr>
-CharSequence<__Mystr>& CharSequence<__Mystr>::operator +(CharSequence<__Mystr> &_csnd)
+template <class _Mystr_>
+CharSequence<_Mystr_>& CharSequence<_Mystr_>::operator +(CharSequence<_Mystr_> &_csnd)
 {
-    CharSequence<__Mystr> *_csst    = this;
-    CharSequence<__Mystr> *cs       = NULL;
-    CharSequence<__Mystr> **join    = &_csst;
+    CharSequence<_Mystr_> *_csst    = this;
+    CharSequence<_Mystr_> *cs       = NULL;
+    CharSequence<_Mystr_> **join    = &_csst;
 
     while (*join)
     {
         join = &((*join)->next);
     }
     *(join) = &_csnd;
-    cs = new CharSequence<__Mystr>(*_csst);
+    cs = new CharSequence<_Mystr_>(*_csst);
     *(join) = NULL;
     cs->preop |= PREVIOUS_OPERATOR_ADD;
     return *cs;
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator ==(CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator ==(CharSequence<_Mystr_> &_cs)
 {
     if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
     return !cscomp(this->str, _cs.str);
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator ==(const __Mystr *_s)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator ==(const _Mystr_ *_s)
 {
     if ((this->next && this->normalize()));
     return !cscomp(this->str, _s ? _s : "");
 }
 
-template <class __Mystr>
-inline bool operator ==(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline bool operator ==(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
     return (_cs == _s);
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator !=(CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator !=(CharSequence<_Mystr_> &_cs)
 {
     if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
     return cscomp(this->str, _cs.str);
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator !=(const __Mystr *_s)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator !=(const _Mystr_ *_s)
 {
     if ((this->next && this->normalize()));
     return cscomp(this->str, _s ? _s : "");
 }
 
-template <class __Mystr>
-inline bool operator !=(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline bool operator !=(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
     return (_cs != _s);
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator >(CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator >(CharSequence<_Mystr_> &_cs)
 {
     if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
     return (cscomp(this->str, _cs.str) > 0) ? true : false;
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator >(const __Mystr *_s)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator >(const _Mystr_ *_s)
 {
     if ((this->next && this->normalize()));
     return (cscomp(this->str, _s ? _s : "") > 0) ? true : false;
 }
 
-template <class __Mystr>
-inline bool operator >(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline bool operator >(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
     return (_cs < _s);
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator <(CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator <(CharSequence<_Mystr_> &_cs)
 {
     if ((this->next && this->normalize()) || (_cs.next && _cs.normalize()));
     return (cscomp(this->str, _cs.str) < 0) ? true : false;
 }
 
-template <class __Mystr>
-bool CharSequence<__Mystr>::operator <(const __Mystr *_s)
+template <class _Mystr_>
+bool CharSequence<_Mystr_>::operator <(const _Mystr_ *_s)
 {
     if ((this->next && this->normalize()));
     return (cscomp(this->str, _s ? _s : "") < 0) ? true : false;
 }
 
-template <class __Mystr>
-inline bool operator <(const __Mystr *_s, CharSequence<__Mystr> &_cs)
+template <class _Mystr_>
+inline bool operator <(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
     return (_cs > _s);
 }
