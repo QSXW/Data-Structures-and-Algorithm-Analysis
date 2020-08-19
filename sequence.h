@@ -24,10 +24,11 @@ public:
 
     size_t length() const;
     void destroy();
+    const _Mystr_ *c_str() noexcept;
 
     CharSequence<_Mystr_> &operator =(CharSequence<_Mystr_> &_cs);
     CharSequence<_Mystr_> &operator +=(const _Mystr_ *_s);
-    _Mystr_& operator[](std::size_t _index);
+    _Mystr_& operator[](std::size_t _index) noexcept;
     CharSequence<_Mystr_>& operator +(CharSequence<_Mystr_> &_csnd);
     CharSequence<_Mystr_>& operator +(const _Mystr_ *_s);
     bool operator ==(CharSequence<_Mystr_> &_cs);
@@ -128,16 +129,19 @@ CharSequence<_Mystr_>::CharSequence(const CharSequence<_Mystr_> &_cs) : CharSequ
 {
     this->str = (_Mystr_ *)malloc((_cs.length() + 1) * sizeof(_Mystr_));
     const CharSequence<_Mystr_> *cs = &_cs;
-    while (cs)
+    if (this->str)
     {
-        if (cs->str[0] != '\0')
+        while (cs)
         {
-            memcpy(this->str + this->size, cs->str, cs->size * sizeof(_Mystr_));
-            this->size += cs->size;
+            if (cs->str[0] != '\0')
+            {
+                memcpy(this->str + this->size, cs->str, cs->size * sizeof(_Mystr_));
+                this->size += cs->size;
+            }
+            cs = cs->next;
         }
-        cs = cs->next;
+        this->str[this->size] = '\0';
     }
-    this->str[this->size] = '\0';
 }
 
 template <class _Mystr_>
@@ -145,7 +149,7 @@ CharSequence<_Mystr_>::CharSequence(const _Mystr_ *_s) : CharSequence<_Mystr_>()
 {
     this->size = _s ? cslen(_s) : 0;
     this->str = (_Mystr_ *)malloc((this->size + 1) * sizeof(_s));
-    if (this->size > 0)
+    if (this->size > 0 && this->str)
     {
         memcpy(this->str, _s, (this->size + 1) * sizeof(_s));
     }
@@ -155,9 +159,11 @@ CharSequence<_Mystr_>::CharSequence(const _Mystr_ *_s) : CharSequence<_Mystr_>()
 template <class _Mystr_>
 CharSequence<_Mystr_>::CharSequence(int _count, const _Mystr_ _c) : CharSequence<_Mystr_>()
 {
-    this->str = (_Mystr_ *)malloc((_count + 1) * sizeof(_Mystr_));
-    while (_count-- > 0) { this->str[this->size++] = _c; }
-    this->str[this->size] = '\0';
+    if (this->str = (_Mystr_ *)malloc((_count + 1) * sizeof(_Mystr_)))
+    {
+        while (_count-- > 0) { this->str[this->size++] = _c; }
+        this->str[this->size] = '\0';
+    }
 }
 
 template <class _Mystr_>
@@ -248,7 +254,7 @@ bool CharSequence<_Mystr_>::normalize()
 }
 
 template <class _Mystr_>
-_Mystr_& CharSequence<_Mystr_>::operator[](size_t _index)
+_Mystr_& CharSequence<_Mystr_>::operator[](size_t _index) noexcept
 {
     CharSequence<_Mystr_> *cs = this;
     while (cs && _index >= cs->size)
@@ -256,7 +262,7 @@ _Mystr_& CharSequence<_Mystr_>::operator[](size_t _index)
         _index -= cs->size;
         cs = cs->next;
     }
-    return *(cs->str + _index);
+    return (cs ? *(cs->str + _index) : *(this->str + this->size));
 }
 
 template <class _Mystr_>
@@ -417,6 +423,13 @@ template <class _Mystr_>
 inline bool operator <(const _Mystr_ *_s, CharSequence<_Mystr_> &_cs)
 {
     return (_cs > _s);
+}
+
+template <class _Mystr_>
+inline const _Mystr_ *CharSequence<_Mystr_>::c_str() noexcept
+{
+    if (this->next && this->normalize());
+    return this->str;
 }
 
 #endif
