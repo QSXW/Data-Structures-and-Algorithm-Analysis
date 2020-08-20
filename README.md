@@ -27,6 +27,7 @@ int main()
 ```
 ## Debug
 * 新手必经之路，`UTF-8` 和 `GBK` 的爱恨纠缠。（Visual Studio 用户可以跳过此段）
+* GCC offers us tow commands, `-fexec-charset-GBK` and `-finput-charset=UTF-8`, which could be used to convert the UTF-8 to GBK.
 * 在代码开始前添加 `Debug::SetEncoding("UTF-8")` 避免中文乱码。
 ```C++
 #include <iostream>
