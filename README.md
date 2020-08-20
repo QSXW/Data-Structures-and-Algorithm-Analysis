@@ -7,7 +7,7 @@
 ```C++
 #include <iostream>
 using namespace ::std;
-#include "squnence.h"
+#include "squence.h"
 
 int main()
 {
