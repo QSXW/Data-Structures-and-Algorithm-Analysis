@@ -25,3 +25,22 @@ int main()
 	return 0;
 }
 ```
+## Debug
+* 新手必经之路，`UTF-8` 和 `GBK` 的爱恨纠缠。（Visual Studio 用户可以跳过此段）
+* 在代码开始前添加 `Debug::SetEncoding("UTF-8")` 避免中文乱码。
+```C++
+#include <iostream>
+using namespace ::std;
+#include "debug.h"
+
+int main()
+{
+	Debug::SetEncoding("UTF-8");
+
+	String hello_world = "你好，世界！";
+        cout << hello_world << endl;
+
+	Debug::Pause();
+	return 0;
+}
+```
